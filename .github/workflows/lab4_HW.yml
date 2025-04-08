@@ -1,4 +1,4 @@
-name: lab3_HW
+name: lab4_HW
 on:
   push:
     paths:
