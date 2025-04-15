@@ -1,0 +1,39 @@
+name: lab5_HW
+on:
+  push:
+    paths:
+      - 'lab5/**'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # Cache pip dependencies
+      - name: Cache pip
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - run: pip install nbconvert pint matplotlib scipy ipykernel
+
+      - name: Update apt-get
+        run: sudo apt-get update
+
+      # Install system packages
+      - name: Install system packages
+        run: sudo apt-get install -y pandoc texlive-xetex inkscape
+
+      # Convert notebook to PDF
+      - name: Convert notebook
+        run: python -m nbconvert --to pdf lab5/lab5_HW.ipynb
+
+      # Upload artifact
+      - uses: actions/upload-artifact@v4
+        with:
+          path: lab5/lab5_HW.pdf
